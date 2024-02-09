@@ -14,14 +14,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class MainUiState(
-    val coinASymbol: String = "",
-    val coinBSymbol: String = "",
-    val coinAQuantity: Double = 0.0,
-    val coinBQuantity: Double = 0.0,
+    val coinA: Coin = Coin(),
+    val coinB: Coin = Coin(),
+    val quantityCoinA: String = "0.0",
+    val quantityCoinB: String = "0.0",
     val rate: String = "Holding for selection",
     val isGetAvailable: Boolean = false,
     val errorMessage: String = "",
-    val coinNames: List<String> = listOf()
+    val coins: List<Coin> = listOf()
 )
 
 @HiltViewModel
@@ -30,19 +30,19 @@ class MainActivityViewModel @Inject constructor(private val coinsUseCase: CoinsU
     private var scope = CoroutineScope(Dispatchers.IO)
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState
-    private var coins: List<Coin> = listOf()
-    private var currentRate: Double = 0.0
 
     init {
         scope.launch {
             try {
-                coins = coinsUseCase.getCoins()
-                _uiState.update { uiState ->
-                    uiState.copy(
-                        coinNames = coins.map { it.symbol },
-                        coinASymbol = coins[0].symbol,
-                        coinBSymbol = coins[1].symbol
-                    )
+                val res = coinsUseCase.getCoins()
+                res.takeIf { it.isNotEmpty() }?.let {
+                    _uiState.update { uiState ->
+                        uiState.copy(
+                            coins = res,
+                            coinA = res[0],
+                            coinB = res[1],
+                        )
+                    }
                 }
             } catch (e: CustomException) {
                 _uiState.update { it.copy(errorMessage = e.message.toString()) }
@@ -50,23 +50,67 @@ class MainActivityViewModel @Inject constructor(private val coinsUseCase: CoinsU
         }
     }
 
-    fun saveCoinASymbol(symbol: String) {
-        _uiState.update { it.copy(coinASymbol = symbol) }
-    }
+    fun loadCalculatedRate(row: Int) {
+        if (_uiState.value.coins.isNotEmpty()) {
+            val rateA =
+                uiState.value.coinA.priceUsd.toBigDecimal() / uiState.value.coinB.priceUsd.toBigDecimal()
+            val rateB =
+                uiState.value.coinB.priceUsd.toBigDecimal() / uiState.value.coinA.priceUsd.toBigDecimal()
+            val rateString =
+                "1 ${uiState.value.coinA.symbol} = $rateA ${uiState.value.coinB.symbol}"
 
-    fun saveCoinBSymbol(symbol: String) {
-        _uiState.update { it.copy(coinBSymbol = symbol) }
-    }
+            when (row) {
+                0 -> {
+                    _uiState.update {
+                        it.copy(
+                            rate = rateString,
+                            quantityCoinB = ((rateA * _uiState.value.quantityCoinA
+                                .toBigDecimal()).toString())
+                        )
+                    }
+                }
 
-    fun saveCoinAQuantity(quantity: String) {
-        quantity.toDouble().takeIf { !it.isNaN() }?.let {
-            _uiState.update { it.copy(coinAQuantity = quantity.toDouble()) }
+                1 -> {
+                    _uiState.update {
+                        it.copy(
+                            rate = rateString,
+                            quantityCoinA = ((rateB * _uiState.value.quantityCoinB
+                                .toBigDecimal()).toString())
+                        )
+                    }
+                }
+            }
         }
     }
 
-    fun saveCoinBQuantity(quantity: String) {
-        quantity.toDouble().takeIf { !it.isNaN() }?.let {
-            _uiState.update { it.copy(coinBQuantity = quantity.toDouble()) }
+    fun saveCoin(row: Int, coin: Coin) {
+        when (row) {
+            0 -> {
+                _uiState.update { it.copy(coinA = coin) }
+            }
+
+            1 -> {
+                _uiState.update { it.copy(coinB = coin) }
+            }
+        }
+    }
+
+    fun saveQuantity(row: Int, quantity: String) {
+        var newQuantity = quantity
+
+        newQuantity.takeIf { it.matches(Regex("^[1-9]\\d*([.,]\\d+)\$")) }?.let {
+            if (newQuantity.contains(",")) {
+                newQuantity = newQuantity.replace(",", ".")
+            }
+            when (row) {
+                0 -> {
+                    _uiState.update { it.copy(quantityCoinA = newQuantity) }
+                }
+
+                1 -> {
+                    _uiState.update { it.copy(quantityCoinB = newQuantity) }
+                }
+            }
         }
     }
 }

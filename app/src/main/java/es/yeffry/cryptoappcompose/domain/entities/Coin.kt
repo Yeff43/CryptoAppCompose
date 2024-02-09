@@ -5,11 +5,11 @@ import com.yeffry.cryptoapp.data.datasource.coin.local.dbo.CoinDBO
 
 data class Coin(
     @SerializedName("id")
-    val coinId: String,
+    val coinId: String = "",
     val symbol: String = "",
     val name: String = "",
     val priceUsd: String = "",
-    val image: String = ""
+    val image: String = "",
 )
 
 fun Coin.toLocal(): CoinDBO {
