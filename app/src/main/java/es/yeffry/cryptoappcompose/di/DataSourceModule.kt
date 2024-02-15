@@ -1,17 +1,21 @@
-package com.yeffry.cryptoapp.di
+package es.yeffry.cryptoappcompose.di
 
-import es.yeffry.cryptoappcompose.datasource.coin.local.AssetsLocalDataSource
-import es.yeffry.cryptoappcompose.datasource.coin.AssetsRemoteDataSource
+import es.yeffry.cryptoappcompose.datasource.coin.local.AssetsLocalDataSourceInterface
+import es.yeffry.cryptoappcompose.datasource.coin.AssetsDataSourceInterface
 import es.yeffry.cryptoappcompose.datasource.coin.local.AssetsLocalDataSourceImpl
-import es.yeffry.cryptoappcompose.datasource.coin.local.dao.AssetsDAO
-import es.yeffry.cryptoappcompose.datasource.coin.remote.AssetsRemoteRemoteDataSourceImpl
+import es.yeffry.cryptoappcompose.datasource.coin.local.dao.AssetsDao
+import es.yeffry.cryptoappcompose.datasource.coin.remote.AssetsRemoteDataSourceImpl
 import es.yeffry.cryptoappcompose.datasource.coin.remote.api.AssetsApi
 import es.yeffry.cryptoappcompose.network.NetworkManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import es.yeffry.cryptoappcompose.datasource.coin.mockDataSource.AssetsMockDataSourceImpl
+import javax.inject.Qualifier
 
+@Qualifier
+annotation class Mock
 @Module
 @InstallIn(SingletonComponent::class)
 class DataSourceModule {
@@ -20,12 +24,16 @@ class DataSourceModule {
     fun provideAssetsRemoteDataSource(
         api: AssetsApi,
         networkManager: NetworkManager
-    ): AssetsRemoteDataSource =
-        AssetsRemoteRemoteDataSourceImpl(api, networkManager)
+    ): AssetsDataSourceInterface =
+        AssetsRemoteDataSourceImpl(api, networkManager)
 
 
     @Provides
     fun provideAssetsLocalDataSource(
-        api: AssetsDAO
-    ): AssetsLocalDataSource = AssetsLocalDataSourceImpl(api)
+        api: AssetsDao
+    ): AssetsLocalDataSourceInterface = AssetsLocalDataSourceImpl(api)
+
+    @Mock
+    @Provides
+    fun provideAssetsMockDataSource(): AssetsDataSourceInterface = AssetsMockDataSourceImpl()
 }

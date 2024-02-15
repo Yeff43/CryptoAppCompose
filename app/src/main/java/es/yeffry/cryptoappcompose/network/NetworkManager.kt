@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class NetworkManager @Inject constructor() {
     suspend fun <T> load(call: suspend () -> Response<T>): Result<T?> {
-        var serverResponse = ErrorBodyDTO("")
+        var serverResponse: ErrorBodyDTO?
         return try {
             val response = call()
             if (response.isSuccessful) {
@@ -31,11 +31,11 @@ class NetworkManager @Inject constructor() {
                     val errorBody = e.response()?.errorBody()
                     if (errorBody != null) {
                         val gson = Gson()
-                        val errorBodyDTO =
+                        serverResponse =
                             gson.fromJson(errorBody.string(), ErrorBodyDTO::class.java)
-                        errorBodyDTO.errorMessage
-                    } else {
                         serverResponse.errorMessage
+                    } else {
+                        "Unknown Error"
                     }
                 }
 

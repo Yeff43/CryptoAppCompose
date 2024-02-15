@@ -4,13 +4,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.yeffry.cryptoapp.data.datasource.coin.local.dbo.CoinDBO
+import es.yeffry.cryptoappcompose.datasource.coin.local.dbo.CoinDbo
 
 @Dao
-interface AssetsDAO {
+interface AssetsDao {
     @Query("SELECT * FROM assets ")
-    fun getAllAssets(): List<CoinDBO>
+    fun getAssets(): List<CoinDbo>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(assets: List<CoinDBO>)
+    fun saveCoins(assets: List<CoinDbo>)
 }

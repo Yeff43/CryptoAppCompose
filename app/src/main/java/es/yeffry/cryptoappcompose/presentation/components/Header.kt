@@ -19,7 +19,7 @@ fun Header(title: String) {
         fontStyle = FontStyle.Normal,
         color = Color.White,
         modifier = Modifier
-            .padding(0.dp, 24.dp, 0.dp)
+            .padding(start = 0.dp, top = 24.dp, end = 0.dp, bottom = 0.dp)
             .fillMaxWidth(),
         textAlign = TextAlign.Center
     )

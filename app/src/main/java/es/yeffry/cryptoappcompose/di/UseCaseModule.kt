@@ -1,8 +1,8 @@
-package com.yeffry.cryptoapp.di
+package es.yeffry.cryptoappcompose.di
 
 import es.yeffry.cryptoappcompose.domain.repository.CoinsRepository
 import es.yeffry.cryptoappcompose.domain.usecase.assets.CoinsUseCase
-import es.yeffry.cryptoappcompose.domain.usecase.assets.AssetsUseCaseImpl
+import es.yeffry.cryptoappcompose.domain.usecase.assets.CoinsUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,5 +14,5 @@ class UseCaseModule {
 
     @Provides
     fun provideRemoteAssetsUseCase(assetsRepository: CoinsRepository): CoinsUseCase =
-        AssetsUseCaseImpl(assetsRepository)
+        CoinsUseCaseImpl(assetsRepository)
 }

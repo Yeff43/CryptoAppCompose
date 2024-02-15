@@ -1,15 +1,15 @@
-package com.yeffry.cryptoapp.data.datasource.coin.local.database
+package es.yeffry.cryptoappcompose.datasource.coin.local.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import es.yeffry.cryptoappcompose.datasource.coin.local.dao.AssetsDAO
-import com.yeffry.cryptoapp.data.datasource.coin.local.dbo.CoinDBO
+import es.yeffry.cryptoappcompose.datasource.coin.local.dao.AssetsDao
+import es.yeffry.cryptoappcompose.datasource.coin.local.dbo.CoinDbo
 
-@Database(entities = [CoinDBO::class], version = 1, exportSchema = false)
+@Database(entities = [CoinDbo::class], version = 1, exportSchema = false)
 abstract class AppLocalDatabase : RoomDatabase() {
-    abstract fun assetsDao(): AssetsDAO
+    abstract fun assetsDao(): AssetsDao
 
     companion object {
         private const val DATABASE_NAME = "crypto-database"

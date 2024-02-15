@@ -1,9 +1,8 @@
 package es.yeffry.cryptoappcompose.datasource.coin.remote.dto
 
 import com.google.gson.annotations.SerializedName
-import es.yeffry.cryptoappcompose.domain.entities.Coin
 
-data class CoinDTO(
+data class AssetDto(
     @SerializedName("id") val coinId: String,
     val rank: String? = null,
     val symbol: String = "",
@@ -16,12 +15,3 @@ data class CoinDTO(
     val changePercent24Hr: String? = null,
     val vwap24Hr: String? = null
 )
-
-fun CoinDTO.toDomain(): Coin {
-    return Coin(
-        coinId,
-        symbol,
-        name,
-        priceUsd
-    )
-}

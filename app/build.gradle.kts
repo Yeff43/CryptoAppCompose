@@ -96,6 +96,10 @@ dependencies {
     implementation ("androidx.room:room-runtime:2.4.0")
     implementation ("androidx.room:room-ktx:2.4.0")
     kapt("androidx.room:room-compiler:2.4.0")
+
+    //Mockito Test
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation("org.mockito:mockito-inline:2.13.0")
 }
 
 kapt {

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Locale.*
 import javax.inject.Inject
 
 data class MainUiState(
@@ -51,7 +52,7 @@ class MainActivityViewModel @Inject constructor(private val coinsUseCase: CoinsU
     }
 
     fun loadCalculatedRate(row: Int) {
-        if (_uiState.value.coins.isNotEmpty()) {
+        if (_uiState.value.coins.isNotEmpty() && (uiState.value.quantityCoinA != "0.0" && uiState.value.quantityCoinA != "0.0")) {
             val rateA =
                 uiState.value.coinA.priceUsd.toBigDecimal() / uiState.value.coinB.priceUsd.toBigDecimal()
             val rateB =
@@ -61,21 +62,23 @@ class MainActivityViewModel @Inject constructor(private val coinsUseCase: CoinsU
 
             when (row) {
                 0 -> {
+                    val quantity =
+                        "%,.5f".format(ENGLISH, rateA * _uiState.value.quantityCoinA.toBigDecimal())
                     _uiState.update {
                         it.copy(
                             rate = rateString,
-                            quantityCoinB = ((rateA * _uiState.value.quantityCoinA
-                                .toBigDecimal()).toString())
+                            quantityCoinB = quantity.replace(",","")
                         )
                     }
                 }
 
                 1 -> {
+                    val quantity =
+                        "%,.5f".format(ENGLISH, rateB * _uiState.value.quantityCoinA.toBigDecimal())
                     _uiState.update {
                         it.copy(
                             rate = rateString,
-                            quantityCoinA = ((rateB * _uiState.value.quantityCoinB
-                                .toBigDecimal()).toString())
+                            quantityCoinA = quantity.replace(",","")
                         )
                     }
                 }
@@ -93,6 +96,7 @@ class MainActivityViewModel @Inject constructor(private val coinsUseCase: CoinsU
                 _uiState.update { it.copy(coinB = coin) }
             }
         }
+        loadCalculatedRate(row)
     }
 
     fun saveQuantity(row: Int, quantity: String) {
@@ -112,5 +116,23 @@ class MainActivityViewModel @Inject constructor(private val coinsUseCase: CoinsU
                 }
             }
         }
+    }
+
+    fun swapCoins(
+        coinA: Coin,
+        coinB: Coin,
+        quantityCoinA: String,
+        quantityCoinB: String,
+        row: Int
+    ) {
+        _uiState.update {
+            it.copy(
+                coinA = coinB,
+                quantityCoinA = quantityCoinB,
+                coinB = coinA,
+                quantityCoinB = quantityCoinA
+            )
+        }
+        loadCalculatedRate(row)
     }
 }

@@ -1,8 +1,8 @@
 package es.yeffry.cryptoappcompose.di
 
 import android.app.Application
-import es.yeffry.cryptoappcompose.datasource.coin.local.dao.AssetsDAO
-import com.yeffry.cryptoapp.data.datasource.coin.local.database.AppLocalDatabase
+import es.yeffry.cryptoappcompose.datasource.coin.local.dao.AssetsDao
+import es.yeffry.cryptoappcompose.datasource.coin.local.database.AppLocalDatabase
 import es.yeffry.cryptoappcompose.datasource.coin.remote.api.AssetsApi
 import dagger.Module
 import dagger.Provides
@@ -54,5 +54,5 @@ class ApiModule {
     @Singleton
     fun provideAssetsDao(
         appLocalDatabase: AppLocalDatabase
-    ): AssetsDAO = appLocalDatabase.assetsDao()
+    ): AssetsDao = appLocalDatabase.assetsDao()
 }

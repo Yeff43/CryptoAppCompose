@@ -99,7 +99,19 @@ fun CryptoApp(viewModel: MainActivityViewModel) {
                     modifier = Modifier
                         .size(58.dp)
                         .padding(top = 18.dp)
-                        .clickable(enabled = true) {}
+                        .clickable(
+                            enabled = true,
+                            onClick = ({
+                                viewModel.swapCoins(
+                                    uiState.coinA,
+                                    uiState.coinB,
+                                    uiState.quantityCoinA,
+                                    uiState.quantityCoinB,
+                                    0
+                                )
+                            })
+                        )
+                        .align(Alignment.CenterVertically)
                 )
             }
             CoinRow(uiState.coinB, uiState.quantityCoinB, viewModel, 1)

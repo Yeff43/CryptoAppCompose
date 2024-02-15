@@ -23,7 +23,7 @@ fun CustomBottomBar() {
     ) {
         Text(
             text = "By Yeffry Rodriguez.", color = Color.White,
-            modifier = Modifier.padding(0.dp, 0.dp, 16.dp, 4.dp)
+            modifier = Modifier.padding(start = 0.dp, top = 0.dp, end = 16.dp, bottom = 4.dp)
         )
     }
 }
